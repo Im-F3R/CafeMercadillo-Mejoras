@@ -1,8 +1,8 @@
 'use strict';
 
 const configuracionSupabase = {
-  url: '',
-  clave: '',
+  url: 'https://ocprgekkwykgvghrsfrd.supabase.co',
+  clave: 'sb_publishable_D4X7-HnT-UhroKxkhPp6gQ_79YkVxCp',
 };
 
 let baseDatos;
