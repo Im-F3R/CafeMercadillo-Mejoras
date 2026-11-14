@@ -125,6 +125,18 @@ async function probar() {
   await run('accesoRemoto')({ email: 'cliente@example.test', password: 'correcta' }, null);
   assert.equal(run('favorites[0]'), 1);
   assert(llamadas.some((l) => l.parametros?.p_accion === 'favorito'));
+  async function probarCarritoTrasAcceso(datos) {
+    run('profile = null');
+    await run('agregarRemoto')(1, 2, 'Molido', '250 g');
+    const antes = llamadas.length;
+    await run('accesoRemoto')(datos, null);
+    const operaciones = llamadas.slice(antes).filter((l) => l.parametros?.p_accion === 'carrito');
+    assert.equal(operaciones.length, 1);
+    assert.equal(operaciones[0].parametros.p_datos.presentacion, 'V0000101');
+    assert.equal(operaciones[0].parametros.p_datos.cantidad, 2);
+    assert.equal(w.sessionStorage.getItem('mercadillo-carrito-pendiente'), null);
+  }
+  await probarCarritoTrasAcceso({ email: 'cliente@example.test', password: 'correcta' });
   run("cart = [lineaDesdeVariante('V0000101', 1)]");
   navegar('checkout');
   assert.equal(w.document.querySelector('[name="payment"]:checked').value, 'TARJDEMO');
@@ -158,7 +170,7 @@ async function probar() {
   for (const session of [{ access_token: 'sesion-de-prueba' }]) {
     run("authTab = 'register'");
     cliente.auth.signUp = async () => ({ data: { user: { id: 'nuevo', identities: [{ provider: 'email' }] }, session }, error: null });
-    await run('accesoRemoto')(registro, null);
+    await probarCarritoTrasAcceso(registro);
     assert.equal(w.document.querySelector('#toast').textContent, 'Cuenta creada correctamente');
   }
   pagina.window.close();

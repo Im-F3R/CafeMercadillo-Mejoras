@@ -223,7 +223,7 @@ function mostrarConfirmacion() {
   return plantilla('confirmacion', {
     numero: lastOrder.number,
     detalle: crearDetallePedido(lastOrder),
-    botonPedido: crearBoton('Ver mi pedido', `seguimiento?id=${lastOrder.number}`),
+    botonPedido: crearBoton('Ver mi pedido', 'pedidos'),
     botonTienda: crearBoton('Seguir comprando', 'tienda', true),
   });
 }

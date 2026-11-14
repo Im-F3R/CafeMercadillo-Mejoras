@@ -103,11 +103,13 @@ async function operacionRemota(accion, datos) {
   return respuesta;
 }
 
-function solicitarSesion(destino) {
+function solicitarSesion(destino, lineaCarrito) {
   if (profile) return true;
   const ruta = obtenerRuta();
   returnTo = destino || ruta.name + (location.search || '');
   sessionStorage.setItem('mercadillo-retorno', returnTo);
+  if (lineaCarrito) sessionStorage.setItem('mercadillo-carrito-pendiente', JSON.stringify(lineaCarrito));
+  else sessionStorage.removeItem('mercadillo-carrito-pendiente');
   sessionStorage.setItem('mercadillo-favorito-pendiente', JSON.stringify(favoritoPendiente));
   irA('login');
   mostrarMensaje('Inicia sesión para continuar');
@@ -184,6 +186,11 @@ async function accesoRemoto(datos, formulario) {
     }
   }
   await cargarCuentaRemota();
+  const linea = JSON.parse(sessionStorage.getItem('mercadillo-carrito-pendiente') || 'null');
+  if (linea) {
+    sessionStorage.removeItem('mercadillo-carrito-pendiente');
+    await sumarAlCarrito(linea.presentacion, linea.cantidad);
+  }
   const pendiente = favoritoPendiente ?? JSON.parse(sessionStorage.getItem('mercadillo-favorito-pendiente') || 'null');
   const producto = buscarProducto(pendiente);
   if (producto) await operacionRemota('favorito', { producto: producto.code, guardar: true });
@@ -206,13 +213,17 @@ async function favoritoRemoto(boton) {
 }
 
 async function agregarRemoto(id, cantidad, presentacion, peso, molienda) {
-  if (!solicitarSesion()) return;
   const p = buscarProducto(id);
   const v = buscarVariante(p, presentacion || p.presentation, peso || p.weight, molienda);
   if (!v || v.price === null) throw new Error('Selecciona una presentación disponible');
-  const actual = cart.find((c) => c.variant === v.code)?.qty || 0;
-  await operacionRemota('carrito', { presentacion: v.code, cantidad: actual + Number(cantidad) });
+  if (!solicitarSesion(undefined, { presentacion: v.code, cantidad: Number(cantidad) })) return;
+  await sumarAlCarrito(v.code, Number(cantidad));
   mostrarEncabezado(); mostrarMensaje('Producto añadido al carrito');
+}
+
+async function sumarAlCarrito(presentacion, cantidad) {
+  const actual = cart.find((c) => c.variant === presentacion)?.qty || 0;
+  await operacionRemota('carrito', { presentacion, cantidad: actual + cantidad });
 }
 
 async function pedidoRemoto(datos, formulario) {
