@@ -33,6 +33,7 @@ const imagenesLocales = {
   29: { archivo: 'imagenes/productos-lojanos/Cocada.png' },
   30: { archivo: 'imagenes/productos-lojanos/GalletasDePanela.png' },
   31: { archivo: 'imagenes/productos-lojanos/ManiTostado.png' },
+  32: { archivo: 'imagenes/productos-lojanos/maizTostado.png' },
   33: { archivo: 'imagenes/productos-lojanos/HarinaDeMaiz.png' },
   34: { archivo: 'imagenes/productos-lojanos/PastaDeMani.png' },
   35: { archivo: 'imagenes/productos-lojanos/FrejolSeco.png' },
