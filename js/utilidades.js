@@ -14,11 +14,21 @@ const imagenesLocales = {
   10: { carpeta: 'pack-origen', prefijo: 'CafeMercadilloPackOrigen', extension: 'png' },
   11: { carpeta: 'cafe-descafeinado', prefijo: 'CafeMercadilloDescaeinado', extension: 'png' },
   12: { carpeta: 'cafe-tostado-artesanal', prefijo: 'CafeMercadilloTostadoArtesanal', extension: 'png' },
+  13: { archivo: 'imagenes/productos-lojanos/BocadillosLojanos.png' },
+  14: { archivo: 'imagenes/productos-lojanos/DulceDeGuayaba.png' },
+  15: { archivo: 'imagenes/productos-lojanos/roscones.png' },
+  16: { archivo: 'imagenes/productos-lojanos/ConservaDulceDeLeche.png' },
+  17: { archivo: 'imagenes/productos-lojanos/Horchata.png' },
+  18: { archivo: 'imagenes/productos-lojanos/MielDeAbeja.png' },
+  19: { archivo: 'imagenes/productos-lojanos/PanelaArtesanal.png' },
+  20: { archivo: 'imagenes/productos-lojanos/InfusionDeHierbas.png' },
+  21: { archivo: 'imagenes/productos-lojanos/CajaSaboresDeLoja.png' },
 };
 
 function imagenProducto(producto, presentacion = 'Molido', peso = '250 g') {
   const archivos = imagenesLocales[producto?.id];
   if (!archivos) return producto?.image || 'favicon.svg';
+  if (archivos.archivo) return archivos.archivo;
   const gramos = { '250 g': '250', '450 g': '450', '900 g': '900' }[peso];
   if (!gramos || !['Molido', 'En grano'].includes(presentacion)) return producto.image;
   const formato = presentacion === 'En grano' ? 'EnGrano' : '';
